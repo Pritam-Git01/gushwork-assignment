@@ -1,53 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// TypeScript interface for scroll direction
-interface ScrollState {
-  isSticky: boolean;
-  isVisible: boolean;
-}
-
 // Header Component
 export const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [scrollState, setScrollState] = useState<ScrollState>({
-    isSticky: false,
-    isVisible: false
-  });
-  const lastScrollY = useRef<number>(0);
-  const ticking = useRef<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
-    const handleScroll = (): void => {
-      if (!ticking.current) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY: number = window.scrollY;
-          const scrollThreshold: number = window.innerHeight / 4;
-          
-          if (currentScrollY > scrollThreshold) {
-            const scrollDirection = currentScrollY > lastScrollY.current ? 'down' : 'up';
-            
-            if (scrollDirection === 'down') {
-              setScrollState({ isSticky: true, isVisible: true });
-            } else {
-              setScrollState({ isSticky: true, isVisible: false });
-            }
-          } else {
-            setScrollState({ isSticky: false, isVisible: false });
-          }
-          
-          lastScrollY.current = currentScrollY;
-          ticking.current = false;
-        });
-
-        ticking.current = true;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > window.innerHeight / 4) {
+        if (currentScrollY > lastScrollY.current) {
+          setIsSticky(true);
+        } else {
+          setIsSticky(false);
+        }
+      } else {
+        setIsSticky(false);
       }
+      
+      lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menu when clicking outside
+    // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
       const target = event.target as HTMLElement;
@@ -76,59 +56,27 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header 
-        className={`
-          fixed left-0 right-0 bg-white z-[1000] 
-          transition-all duration-300 ease-in-out 
-          shadow-sm
-          px-4 lg:px-[60px] xl:px-[100px] py-4
-          ${scrollState.isSticky && scrollState.isVisible ? 'top-0 opacity-100' : ''}
-          ${scrollState.isSticky && !scrollState.isVisible ? '-top-[100px] opacity-0' : ''}
-          ${!scrollState.isSticky ? 'top-0 opacity-100' : ''}
-        `}
-        role="banner"
-        aria-label="Main navigation"
-      >
-        <div className="max-w-[1240px] mx-auto flex justify-between items-center font-inter font-medium text-sm text-[#262A2E]">
-          {/* Logo */}
-          <img 
-            src="/images/mobile_logo.svg" 
-            alt="Gushwork logo" 
-            className="h-auto relative z-[1002]"
-          />
+    <header 
+      className={`fixed left-0 right-0 bg-white z-[1000] transition-all duration-300 ease-in-out shadow-sm ${
+        isSticky ? 'top-0' : '-top-[100px]'
+      } px-4 lg:px-[60px] xl:px-[100px] py-4`}
+    >
+      <div className="max-w-[1240px] mx-auto flex justify-between items-center font-inter font-medium text-sm text-[#262A2E]">
+        <img src="/images/mobile_logo.svg" alt="Gushwork logo" />
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-5 items-center" aria-label="Desktop navigation">
-            <button 
-              className="hover:text-[#2B3990] transition-colors duration-200"
-              type="button"
-            >
-              About Us
-            </button>
-            
-            <button 
-              className="flex items-center gap-2 hover:text-[#2B3990] transition-colors duration-200"
-              type="button"
-              aria-haspopup="true"
-            >
-              <span>Products</span>
-              <img 
-                src="/images/caretdown.svg" 
-                alt="" 
-                className="w-4 h-4"
-                aria-hidden="true"
-              />
-            </button>
-            
-            <button 
-              className="bg-[#2B3990] px-4 py-3 rounded-[10px] text-white hover:bg-[#1f2a6b] transition-colors duration-200"
-              type="button"
-            >
-              Contact Us
-            </button>
-          </nav>
+        {/* Desktop Links */}
+        <div className="hidden md:flex gap-5 items-center">
+          <div>About Us</div>
+          <div className="flex items-center gap-2">
+            <p>Products</p>
+            <img src="/images/caretdown.svg" alt="down" />
+          </div>
+          <button className="bg-[#2B3990] px-4 py-3 rounded-[10px] text-white">
+            Contact Us
+          </button>
+        </div>
 
-          {/* Mobile Hamburger Button */}
+      {/* Mobile Hamburger Button */}
           <button
             type="button"
             className="md:hidden w-[30px] h-[30px] cursor-pointer hamburger-btn focus:outline-none relative z-[1002] flex flex-col justify-center items-center gap-1"
@@ -226,3 +174,16 @@ export const Header: React.FC = () => {
     </>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
