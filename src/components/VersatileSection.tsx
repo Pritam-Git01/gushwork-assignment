@@ -52,8 +52,8 @@ export const VersatileSection: React.FC = () => {
 
         <div 
           ref={scrollRef}
-          className="mt-12 flex gap-4 overflow-x-auto scrollbar-hide px-4 lg:px-[60px] xl:px-[100px]"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+           className="mt-12 overflow-x-auto flex gap-4 px-4 lg:px-[60px] xl:px-[100px] scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {items.map((item, idx) => (
             <div 

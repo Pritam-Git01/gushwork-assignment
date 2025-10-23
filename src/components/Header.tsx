@@ -58,7 +58,7 @@ export const Header: React.FC = () => {
     <>
     <header 
       className={`fixed left-0 right-0 bg-white z-[1000] transition-all duration-300 ease-in-out shadow-sm ${
-        isSticky ? 'top-0' : '-top-[100px]'
+        isSticky ? 'top-0' : '-top-[77px]'
       } px-4 lg:px-[60px] xl:px-[100px] py-4`}
     >
       <div className="max-w-[1240px] mx-auto flex justify-between items-center font-inter font-medium text-sm text-[#262A2E]">
