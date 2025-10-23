@@ -243,7 +243,9 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Brand Banner */}
-        <div className="mt-14 lg:mt-20 mb-12 lg:mb-20 flex flex-col gap-5">
+        <div className="mt-14 lg:mt-20 mb-12 lg:mb-20 flex flex-col gap-5 overflow-x-auto scrollbar-hide"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
           <p className="font-inter text-sm text-center text-[#878B94]">
             Trusted by Hundreds of Companies Globally
           </p>
