@@ -1,11 +1,43 @@
 import type React from "react";
 import { useState } from "react";
 
+interface ImageItem {
+  id: number;
+  url: string;
+  alt: string;
+}
+
 // Hero Section Component
 export const HeroSection: React.FC = () => {
+  // Image gallery
+  const images: ImageItem[] = [
+    { id: 1, url: '/images/hero_first_image.png', alt: 'HDPE Pipes - View 1' },
+    { id: 2, url: '/images/hero_second_image.jpg', alt: 'Pipeline Infrastructure - View 2' },
+    { id: 3, url: '/images/hero_third_image.jpg', alt: 'Industrial Piping - View 3' },
+    { id: 4, url: '/images/hero_fourth_image.jpg', alt: 'Pipeline System - View 4' },
+    { id: 5, url: '/images/hero_fifth_image.jpg', alt: 'Modern Pipes - View 5' }
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [zoomStyle, setZoomStyle] = useState({ display: 'none', backgroundPosition: 'center' });
   const [magnifierPos, setMagnifierPos] = useState({ display: 'none', top: 0, left: 0 });
 
+  const currentImage = images[currentImageIndex];
+
+  // Navigation handlers
+  const handlePrevious = (): void => {
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNext = (): void => {
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleThumbnailClick = (index: number): void => {
+    setCurrentImageIndex(index);
+  };
+
+  // Zoom functionality
   const handleMouseEnter = () => {
     setZoomStyle({ display: 'block', backgroundPosition: 'center' });
     setMagnifierPos({ ...magnifierPos, display: 'flex' });
@@ -38,24 +70,87 @@ export const HeroSection: React.FC = () => {
 
         {/* Hero Content */}
         <div className="mt-7 lg:mt-12 flex flex-col lg:flex-row items-start gap-14">
-          {/* Right Side - Image */}
-          <div className="w-full lg:flex-1 lg:max-w-[50%] relative">
-            <img 
-              src="/images/price-range-tab.svg" 
-              className="hidden lg:block w-full lg:-ml-6" 
-              alt="price range"
-              onMouseEnter={handleMouseEnter}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-            />
-            <img 
-              src="/images/price_range.svg" 
-              className="lg:hidden w-full" 
-              alt="price range"
-            />
+          {/* Left Side - Image Gallery */}
+          <div className="w-full lg:flex-1 lg:max-w-[50%]">
+            {/* Main Image Container */}
+            <div className="relative xl:w-[530px] lg:w-[440px] lg:h-[500px] md:h-[500px] w-full h-[300px] overflow-hidden bg-gray-100">
+              <img 
+                src={currentImage.url} 
+                className="w-full h-full rounded-3xl" 
+                alt={currentImage.alt}
+                onMouseEnter={handleMouseEnter}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+              />
+
+              {/* Previous Arrow */}
+              <button
+                onClick={handlePrevious}
+                className="absolute top-1/2 left-4 transform -translate-y-1/2"
+                aria-label="Previous image"
+                type="button"
+              >
+                <img 
+                  src="/images/left-arrow.png" 
+                  alt="" 
+                  className="lg:size-10 size-8"
+                  aria-hidden="true"
+                />
+              </button>
+
+              {/* Next Arrow */}
+              <button
+                onClick={handleNext}
+                className="absolute top-1/2 right-4 transform -translate-y-1/2"
+                aria-label="Next image"
+                type="button"
+              >
+                <img 
+                  src="/images/right-arrow.png" 
+                  alt="" 
+                  className="lg:size-10 size-8"
+                  aria-hidden="true"
+                />
+              </button>
+
+              {/* Image Counter */}
+              <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1.5 rounded-full text-sm font-inter">
+                {currentImageIndex + 1} / {images.length}
+              </div>
+            </div>
+
+            {/* Thumbnail Gallery */}
+            <div className="mt-4 flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+              {images.map((image, index) => (
+                <button
+                  key={image.id}
+                  onClick={() => handleThumbnailClick(index)}
+                  className={`
+                    relative flex-shrink-0 rounded-xl overflow-hidden
+                    transition-all duration-300 ease-in-out
+                    w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24
+                    ${index === currentImageIndex 
+                      ? 'opacity-100 scale-105' 
+                      : 'opacity-40 hover:opacity-70 scale-100 hover:scale-105'
+                    }
+                  `}
+                  type="button"
+                  aria-label={`View ${image.alt}`}
+                  aria-current={index === currentImageIndex ? 'true' : 'false'}
+                >
+                  <div className="w-full h-full bg-gray-100">
+                    <img
+                      src={image.url}
+                      alt={image.alt}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Left Side - Content */}
+          {/* Right Side - Content */}
           <div className="w-full lg:flex-1">
             {/* Certifications */}
             <div className="flex gap-3 flex-wrap lg:flex-nowrap">
@@ -115,10 +210,10 @@ export const HeroSection: React.FC = () => {
 
               {/* CTA Buttons */}
               <div className="flex flex-col md:flex-row gap-3 mb-14 lg:mb-0">
-                <button className="bg-[#2B3990] text-white rounded-xl h-[52px] flex justify-center items-center gap-1.5 font-inter font-medium text-base md:px-6">
+                <button className="bg-[#2B3990] text-white rounded-xl h-[52px] flex justify-center items-center gap-1.5 font-inter font-medium text-base md:px-6 hover:bg-[#1f2a6b] transition-colors duration-200">
                   <span>Get Custom Quote</span>
                 </button>
-                <button className="bg-white border border-[#2B3990] text-[#262A2E] rounded-xl h-[52px] flex justify-center items-center gap-1.5 font-inter font-medium text-base md:px-6">
+                <button className="bg-white border border-[#2B3990] text-[#262A2E] rounded-xl h-[52px] flex justify-center items-center gap-1.5 font-inter font-medium text-base md:px-6 hover:bg-[#F7F8F9] transition-colors duration-200">
                   <span>View Technical Specs</span>
                   <img src="/images/CaretRight-2.svg" alt="right" className="w-4 h-4" />
                 </button>
@@ -129,15 +224,15 @@ export const HeroSection: React.FC = () => {
 
         {/* Zoom Preview */}
         <div 
-          className="absolute top-[30%] left-[50%] w-[300px] h-[300px] bg-no-repeat bg-[length:200%] bg-center border border-black/10 shadow-lg rounded-xl z-[999] pointer-events-none"
+          className="absolute sm:top-[30%] top-[55%] sm:left-[50%] left-[35%] lg:size-[300px] md:size-60 size-40 bg-no-repeat bg-[length:200%] bg-center border border-black/10 shadow-lg rounded-xl z-[999] pointer-events-none"
           style={{
             display: zoomStyle.display,
-            backgroundImage: `url(/images/price-range-tab.svg)`,
+            backgroundImage: `url(${currentImage.url})`,
             backgroundPosition: zoomStyle.backgroundPosition,
           }}
         />
         <div 
-          className="fixed w-[100px] h-[100px] border border-[#B1B1B1] justify-center items-center pointer-events-none z-[9999] backdrop-blur-[2px]"
+          className="fixed lg:w-[100px] lg:h-[100px] w-20 h-20 border border-[#B1B1B1] justify-center items-center pointer-events-none z-[9999] backdrop-blur-[2px]"
           style={{
             display: magnifierPos.display,
             top: `${magnifierPos.top}px`,
